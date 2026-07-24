@@ -40,9 +40,17 @@ static const unsigned kNumPrimes = sizeof(kPrimes) / sizeof(kPrimes[0]);
 unsigned
 dict_prime_geq(unsigned n)
 {
-    /* TODO(farooq): use binary search */
-    for (unsigned index = 0; index < kNumPrimes; ++index)
-	if (kPrimes[index] >= n)
-	    return kPrimes[index];
-    return kPrimes[kNumPrimes - 1];
+    /* Binary search for the smallest prime >= n; kPrimes is sorted
+     * ascending, so this is a standard lower-bound search. */
+    unsigned lo = 0, hi = kNumPrimes;
+    while (lo < hi) {
+	const unsigned mid = lo + (hi - lo) / 2;
+	if (kPrimes[mid] < n)
+	    lo = mid + 1;
+	else
+	    hi = mid;
+    }
+    if (lo >= kNumPrimes)
+	return kPrimes[kNumPrimes - 1];
+    return kPrimes[lo];
 }
